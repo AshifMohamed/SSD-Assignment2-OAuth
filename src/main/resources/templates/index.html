@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+<div class="bg-img" th:style="|background-image:url( '@{images/background.jpg}'  );|">
+    <div class="overlay"></div>
+</div>
+<div style="height: 100%" class="container-fluid">
+
+        <div style="height: 100%" class="row">
+            <div class="col"></div>
+            <div class="col align-self-center ">
+                <form class="form-signin" id="form-accnt" th:action="@{/code-request}" method="post">
+                    <input type="submit" id="btn-code" value="GIT FILES" class="main-btn"
+                           style="margin-top: 30%;margin-bottom: 30%"/>
+                </form>
+            </div>
+            <div class="col"></div>
+        </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+
+<script>
+    $(function () {
+
+        $("#btn-code").click(function () {
+
+            getCode();
+        });
+
+    });
+
+    function getCode() {
+
+        $.ajax({
+            type: "GET",
+            url: '"/auth/git"',
+            success: function (data) {
+
+                console.log(data);
+            },
+            error: function (data) {
+
+                console.log(data);
+            }
+
+        });
+    }
+
+    function getCookie() {
+        $.ajax({
+            type: "GET",
+            url: '/get-token',
+            success: function (data) {
+                console.log(data);
+                appendInput(data);
+            },
+            error: function (data) {
+
+            }
+        });
+    }
+</script>
+</body>
+
+</html>
