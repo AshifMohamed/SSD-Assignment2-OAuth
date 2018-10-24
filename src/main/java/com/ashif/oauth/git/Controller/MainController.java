@@ -24,8 +24,6 @@ public class MainController {
         return "index";
     }
 
-
-
     @PostMapping("/code-request")
     public void requestCode(HttpServletResponse response) throws IOException {
 
