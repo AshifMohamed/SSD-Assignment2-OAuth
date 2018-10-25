@@ -61,6 +61,7 @@ public class OAuthController {
     @GetMapping("/home")
     public String callBack(@RequestParam("code") String code) throws IOException{
 
+        System.out.println("Code :"+code);
         TokenResponse tokenResponse =oauthService.getAccessToken( code);
         oauthService.storeCredentials(tokenResponse,"user");
         token=tokenResponse.getAccessToken();
