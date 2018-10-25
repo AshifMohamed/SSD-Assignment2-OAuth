@@ -4,7 +4,6 @@ import com.ashif.oauth.git.Model.Git_User;
 import com.ashif.oauth.git.Service.OAuthService;
 import com.ashif.oauth.git.Utils.OAuth_Configuration;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,46 +25,54 @@ public class OAuthController {
     private Git_User git_user ;
     private AuthorizationCodeFlow flow;
     private String token;
-    private Credential credential;
 
+    /** Check for existing token of the given userId.
+     *  If returned null, get a Authorization code
+     *  Else get the Access Token of the user
+     *  Note : UserId is hard coded here.
+     * @param response
+     * @throws IOException
+     */
     @GetMapping("/auth/git")
     public void authorizeFlow(HttpServletResponse response) throws IOException{
 
         flow= oauthConfig.getAuthorizationCodeFlow();
 
-        String token2;
-        if((token2=oauthService.getCredential())==null){
+        if((token=oauthService.getExistingCredentials("user"))==null){
 
             System.out.println("No Credentials");
-            String url = oauthService.getAuthorizationCode(flow);
+            String url = oauthService.getAuthorizationCode();
             response.sendRedirect(url);
-        }else{
-            System.out.println("Already Have Access:" + token2);
-            response.sendRedirect("redirect:/user");
 
+        }else{
+            System.out.println("Already Have Access:" + token);
+            response.sendRedirect("/user");
         }
-//        if((token=oauthService.getExistingToken(flow,"user"))==null) {
-//            String url = oauthService.getAuthorizationCode(flow);
-//            response.sendRedirect(url);
-//
-//        }else{
-//            System.out.println("Already Have Access");
-//            response.sendRedirect("redirect:/user");
-//
-//        }
 
     }
 
+    /**Get the Authorization Code from the response and
+     * Exchange that to get an Access Token.
+     * Store the Token Response in the in memory Datastore.
+     * @param code
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/home")
     public String callBack(@RequestParam("code") String code) throws IOException{
 
-        TokenResponse tokenResponse =oauthService.getAccessToken(flow, code);
-        oauthService.saveCredential(flow,tokenResponse,"user");
+        TokenResponse tokenResponse =oauthService.getAccessToken( code);
+        oauthService.storeCredentials(tokenResponse,"user");
         token=tokenResponse.getAccessToken();
         System.out.println("Token is :"+ token);
         return "redirect:/user";
     }
 
+    /**Get the git_user model and
+     * bind it for the view
+     * @param model
+     * @return
+     */
     @GetMapping("/user")
     public String showGitPage(Model model )  {
 
