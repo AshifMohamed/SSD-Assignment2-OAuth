@@ -1,4 +1,4 @@
-# OAuth
+# OAuth 2.0
 
 Create a GitHub OAuth application and obtain the clientId & clientSecret.
 Go to "https://github.com/settings/developers" to create the application
